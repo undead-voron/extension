@@ -1,4 +1,4 @@
-chrome.storage.local.get(function(obj){
+chrome.storage.sync.get(function(obj){
 	//console.log(sessionStorage);
 	if (!sessionStorage.getItem('injectionClosed')){
 		if ( sessionStorage.getItem('invokedCounter') < 3){

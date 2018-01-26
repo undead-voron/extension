@@ -6,9 +6,9 @@ const updateInterval = 3600000;
 // download and synchronize data
 const updateInfo = ()=>{
 	$.get( "http://www.softomate.net/ext/employees/list.json", ( data ) => {
-		chrome.storage.local.set({'data': data});
+		chrome.storage.sync.set({'data': data});
 		const d = new Date();
-		chrome.storage.local.set({'lastUpdate': d.getTime()});
+		chrome.storage.sync.set({'lastUpdate': d.getTime()});
 		urlList = data;
 	});
 };
@@ -17,6 +17,7 @@ const updateInfo = ()=>{
 chrome.storage.sync.get(function(obj){
 	// if data was never synchronized download it.
 	if (obj['lastUpdate'] === undefined){
+		alert('no info about last update');
 		setInterval(updateInfo, updateInterval);
 		updateInfo();
 	}else{
@@ -60,7 +61,7 @@ chrome.tabs.onUpdated.addListener((id, changeInfo, tab)=>{
 	if (changeInfo.status === 'complete'){
 		const manageUrl = new UrlManager(tab.url, urlList);
 		if (manageUrl.checkUrl){
-			chrome.storage.local.set({'message': manageUrl.checkUrl});
+			chrome.storage.sync.set({'message': manageUrl.checkUrl});
 			chrome.tabs.executeScript(tab.id, {file: 'js/handlebars-v4.0.11.js', runAt: 'document_idle'});
 			chrome.tabs.insertCSS(tab.id, {file: 'css/main.min.css', runAt: 'document_idle'});
 			chrome.tabs.executeScript(tab.id, {file: 'js/templates.js', runAt: 'document_idle'});

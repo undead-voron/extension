@@ -1,4 +1,4 @@
-chrome.storage.local.get(function(obj) {
+chrome.storage.sync.get(function(obj) {
 	const template = Handlebars.templates['marker'];
 	const data = {
 		url: chrome.runtime.getURL('img/donation.png')
