@@ -1,5 +1,4 @@
 chrome.storage.sync.get(function(obj){
-	//console.log(sessionStorage);
 	if (!sessionStorage.getItem('injectionClosed')){
 		if ( sessionStorage.getItem('invokedCounter') < 3){
 			sessionStorage.setItem('invokedCounter', (sessionStorage.getItem('invokedCounter') !== null ? parseInt(sessionStorage.getItem('invokedCounter')) + 1 : 1));
@@ -21,7 +20,7 @@ chrome.storage.sync.get(function(obj){
 					const injection = document.getElementById('injection');
 					document.body.removeChild(injection);
 				}
-			})
+			});
 		}
 	}
 });
