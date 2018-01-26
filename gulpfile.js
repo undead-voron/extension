@@ -11,17 +11,6 @@ const gulp           = require('gulp'),
 		wrap           = require('gulp-wrapper'),
 		handlebars     = require('gulp-handlebars');
 
- //manage background script
-gulp.task('background-js', ()=> {
-	return gulp.src([
-		'src/js/background.js',
-	])
-		//.pipe(concat('background.min.js'))
-		.pipe(es6uglify())
-
-		.pipe(gulp.dest('out/js'));
-});
-
 gulp.task('js', ()=> {
 	return gulp.src([
 		'src/js/*.js',
@@ -75,8 +64,7 @@ gulp.task('copy-manifest', () => {
 gulp.task('handlebars', (el1) => {
 	return gulp.src('src/handlebars/*.handlebars')
 		.pipe(handlebars())
-		// merge templates
-
+		// precompile templates
 		.pipe(wrap({
 			header: (filename)=>{
 				let name = filename.path.substr(filename.base.length, filename.path.length - filename.base.length).split('.');
@@ -85,6 +73,7 @@ gulp.task('handlebars', (el1) => {
 			},
 			footer: `);`
 		}))
+		// merge templates
 		.pipe(concat('templates.js'))
 		// Wrap for usage
 		.pipe(wrap({
@@ -98,10 +87,12 @@ gulp.task('handlebars', (el1) => {
 			footer: `
 })();`
 		}))
+		// minify templates
 		.pipe(uglify())
 		.pipe(gulp.dest('out/js'))
 });
 
+// constant autobuild
 gulp.task('watch', [
 	'copy-manifest',
 	'js',
@@ -122,6 +113,7 @@ gulp.task('watch', [
 	gulp.watch('src/handlebars/*.handlebars', ['handlebars']);
 });
 
+// build extension
 gulp.task('build', [
 	'copy-manifest',
 	'js',
