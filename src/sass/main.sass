@@ -1,0 +1,60 @@
+@import "vars"
+
+#injection
+	position: fixed
+	top: 0
+	bottom: 0
+	right: 0
+	left: 0
+	background-color: rgba(0,0,0,.75)
+	z-index: 99999
+
+#injection-inner
+	background-color: white
+	position: absolute
+	margin:
+		left: auto
+		right: auto
+	left: 0
+	right: 0
+	width: 50%
+	display: block
+	text-align: center
+	transform: translateY(-50%)
+	top: 50%
+	min-height: 250px
+	font-size: 20px
+	& footer
+		bottom: 0
+		position: absolute
+		width: 90%
+		left: 5%
+		right: 5%
+		border-top: 1px solid #ccc
+		&.injection
+			padding-top: 10px
+			padding-bottom: 10px
+			& button
+				background-color: blue
+				color: white
+				border: blue
+				padding:
+					left: 20px
+					right: 20px
+					bottom: 5px
+					top: 5px
+				font-size: 20px
+				line-height: 1em
+
+.marker
+	margin:
+		top: 5px
+		left: -5px
+	transform: translateX(-100%)
+	position: absolute
+	display: block
+	& img
+		display: block
+		height: auto
+		width: auto
+		max-width: 25px

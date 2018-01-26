@@ -1,0 +1,20 @@
+<!doctype html>
+<html>
+  <head>
+    <title>List of Sites</title>
+    <script src="js/jquery-3.3.1.min.js"></script>
+    <script src="js/handlebars-v4.0.11.js"></script>
+    <script src="js/templates.js"></script>
+    <link rel="stylesheet"href="css/popup.min.css">
+  <body>
+  <h1>List of Sites</h1>
+  <script id="main-template" type="text/x-handlebars-template">
+    <ul class="list-group">
+      {{#itemsList}}
+      <li class="list-group-item"><a href="https://{{domain}}">{{name}}</a></li>
+      {{/itemsList}}
+    </ul>
+  </script>
+  <script src="js/index.js"></script>
+  </body>
+</html>
