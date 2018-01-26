@@ -1,4 +1,4 @@
-const gulp           = require('gulp'),
+const gulp         = require('gulp'),
 		sass           = require('gulp-sass'),
 		concat         = require('gulp-concat'),
 		uglify         = require('gulp-uglify'),
@@ -61,7 +61,7 @@ gulp.task('copy-manifest', () => {
 		.pipe(gulp.dest('out'));
 });
 
-gulp.task('handlebars', (el1) => {
+gulp.task('handlebars', () => {
 	return gulp.src('src/handlebars/*.handlebars')
 		.pipe(handlebars())
 		// precompile templates
