@@ -1,23 +1,30 @@
-// variable for storing data in extension
-let urlList = [];
-
 const updateInterval = 3600000;
 
 // download and synchronize data
 const updateInfo = ()=>{
 	$.get( "http://www.softomate.net/ext/employees/list.json", ( data ) => {
-		chrome.storage.sync.set({'data': data});
+		chrome.storage.local.set({'data': data});
 		const d = new Date();
-		chrome.storage.sync.set({'lastUpdate': d.getTime()});
-		urlList = data;
+		chrome.storage.local.set({'lastUpdate': d.getTime()});
+		chrome.storage.local.get( (obj)=>{
+			chrome.storage.local.set({'siteState': data.map( item =>{
+				const initialState = {messageCounter: 0, messageVisible: true};
+				if (obj['siteState']){
+					const oldState = obj['siteState'].find( el => el.domain === item.domain);
+					const state = oldState ? { messageCounter: oldState.messageCounter, messageVisible: oldState.messageVisible } : initialState;
+					return Object.assign(item, state)
+				}else{
+					return Object.assign(item, initialState)
+				}
+			})});
+		});
 	});
 };
 
 // check last update time
-chrome.storage.sync.get(function(obj){
+chrome.storage.local.get((obj) => {
 	// if data was never synchronized download it.
 	if (obj['lastUpdate'] === undefined){
-		alert('no info about last update');
 		setInterval(updateInfo, updateInterval);
 		updateInfo();
 	}else{
@@ -27,24 +34,27 @@ chrome.storage.sync.get(function(obj){
 			setInterval(updateInfo, updateInterval);
 			updateInfo();
 		}else{
-			// set timer for synchronizing if data was updated less then hour ago
+			//if data was synchronized less then hour ago, create custom timer for next synchronization
 			setTimeout(()=>{
 				setInterval(updateInfo, updateInterval);
 				updateInfo();
-			}, newDate - updateInterval - obj['lastUpdate'])
+			}, updateInterval - (newDate.getTime() - obj['lastUpdate']));
 		}
 	}
+
+	// update sites' state at the start of browser session
+	const siteState = obj['siteState'].map((item) => Object.assign(item, {messageCounter: 0, messageVisible: true}));
+	chrome.storage.local.set({'siteState': siteState });
 });
 
 class UrlManager {
 	constructor(url, list) {
 		this.url = new URL(url);
 		this.siteList = list;
-		this.searchEngines = ['google.com','google.ru','bing.com']
+		this.searchEngines = ['google.com','google.ru','bing.com'];
 	}
 	get checkUrl() {
-		const checker = this.siteList.filter( (item) => this.url.hostname.indexOf(item.domain) > -1);
-		return checker.length === 1 ? checker[0].message : false
+		return this.siteList.findIndex((item) => this.url.hostname.indexOf(item.domain) > -1);
 	}
 	get isSearching(){
 		const check = this.searchEngines.filter((item)=> this.url.hostname.indexOf(item) > -1 );
@@ -59,20 +69,21 @@ class UrlManager {
 
 chrome.tabs.onUpdated.addListener((id, changeInfo, tab)=>{
 	if (changeInfo.status === 'complete'){
-		const manageUrl = new UrlManager(tab.url, urlList);
-		if (manageUrl.checkUrl){
-			chrome.storage.sync.set({'message': manageUrl.checkUrl});
-			chrome.tabs.executeScript(tab.id, {file: 'js/handlebars-v4.0.11.js', runAt: 'document_idle'});
-			chrome.tabs.insertCSS(tab.id, {file: 'css/main.min.css', runAt: 'document_idle'});
-			chrome.tabs.executeScript(tab.id, {file: 'js/templates.js', runAt: 'document_idle'});
-			chrome.tabs.executeScript(tab.id, {file: 'js/message.js', runAt: 'document_end'});
-		}
-		if (manageUrl.isSearching){
-			chrome.tabs.executeScript(tab.id, {file: 'js/jquery-3.3.1.min.js', runAt: 'document_start'});
-			chrome.tabs.executeScript(tab.id, {file: 'js/handlebars-v4.0.11.js', runAt: 'document_idle'});
-			chrome.tabs.insertCSS(tab.id, {file: 'css/main.min.css', runAt: 'document_idle'});
-			chrome.tabs.executeScript(tab.id, {file: 'js/templates.js', runAt: 'document_end'});
-			manageUrl.isBing ? chrome.tabs.executeScript(tab.id, {file: 'js/inject_bing.js', runAt: 'document_end'}) : chrome.tabs.executeScript(tab.id, {file: 'js/inject_google.js', runAt: 'document_end'});
-		}
+		chrome.storage.local.get((obj) => {
+			const manageUrl = new UrlManager(tab.url, obj['data']);
+			if (manageUrl.checkUrl > -1){
+				chrome.tabs.executeScript(tab.id, {file: 'js/handlebars-v4.0.11.js', runAt: 'document_idle'});
+				chrome.tabs.insertCSS(tab.id, {file: 'css/main.min.css', runAt: 'document_idle'});
+				chrome.tabs.executeScript(tab.id, {file: 'js/templates.js', runAt: 'document_idle'});
+				chrome.tabs.executeScript(tab.id, {file: 'js/message.js', runAt: 'document_end'});
+			}
+			if (manageUrl.isSearching){
+				chrome.tabs.executeScript(tab.id, {file: 'js/jquery-3.3.1.min.js', runAt: 'document_start'});
+				chrome.tabs.executeScript(tab.id, {file: 'js/handlebars-v4.0.11.js', runAt: 'document_idle'});
+				chrome.tabs.insertCSS(tab.id, {file: 'css/main.min.css', runAt: 'document_idle'});
+				chrome.tabs.executeScript(tab.id, {file: 'js/templates.js', runAt: 'document_end'});
+				manageUrl.isBing ? chrome.tabs.executeScript(tab.id, {file: 'js/inject_bing.js', runAt: 'document_end'}) : chrome.tabs.executeScript(tab.id, {file: 'js/inject_google.js', runAt: 'document_end'});
+			}
+		});
 	}
 });

@@ -1,4 +1,4 @@
-chrome.storage.sync.get(function(obj){
+chrome.storage.local.get(function(obj){
 	const data = obj['data'];
 
 	const template = Handlebars.templates['popup'];
