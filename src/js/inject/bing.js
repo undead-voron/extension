@@ -14,6 +14,6 @@ chrome.storage.local.get(function(obj) {
 function checkUrl(data, url){
 	const buildUrl= new URL(url);
 	const domain = buildUrl.hostname;
-	const check = data.filter((item) => domain.indexOf('www.'+item.domain) > -1 || domain.indexOf(item.domain) > -1 );
+	const check = data.filter((item) => domain.indexOf('www.'+item.domain) > 0 || domain.indexOf(item.domain) > 0 );
 	return check.length === 1;
 }
