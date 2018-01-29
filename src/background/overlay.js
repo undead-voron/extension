@@ -2,7 +2,6 @@ const updateInterval = 3600000;
 
 // download and synchronize data
 const updateInfo = ()=>{
-	alert('startUpdate');
 	$.get( "http://www.softomate.net/ext/employees/list.json", ( data ) => {
 		chrome.storage.local.set({'data': data});
 		const d = new Date();
