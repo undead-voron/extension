@@ -15,6 +15,14 @@ chrome.storage.local.get( (obj) => {
 		$('#injection')
 			.on('hidden.bs.modal', function (e) {
 				$('#injection').remove();
+				elementInfo.messageVisible = false;
+				const newArray = Array.from(obj['siteState'], (el, index)=>{
+					if (index === elementIndex)
+						return elementInfo;
+					else
+						return el;
+				});
+				chrome.storage.local.set({'siteState': newArray});
 			})
 			.modal('show');
 		const newArray = Array.from(obj['siteState'], (el, index)=>{
@@ -23,18 +31,6 @@ chrome.storage.local.get( (obj) => {
 			else
 				return el;
 		});
-
 		chrome.storage.local.set({'siteState': newArray});
-
-		$('.modal-footer > button').on('click', ()=>{
-			elementInfo.messageVisible = false;
-			const newArray = Array.from(obj['siteState'], (el, index)=>{
-				if (index === elementIndex)
-					return elementInfo;
-				else
-					return el;
-			});
-			chrome.storage.local.set({'siteState': newArray});
-		});
 	}
 });

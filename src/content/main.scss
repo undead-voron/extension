@@ -2,11 +2,16 @@
 @import "../../node_modules/bootstrap/scss/variables";
 @import "../../node_modules/bootstrap/scss/mixins";
 @import "../../node_modules/bootstrap/scss/utilities";
-@import "../../node_modules/bootstrap/scss/buttons";
+@import "../../node_modules/bootstrap/scss/close";
+@import "../../node_modules/bootstrap/scss/type";
+/*@import "../../node_modules/bootstrap/scss/reboot";*/
 @import "../../node_modules/bootstrap/scss/modal";
+@import "../../node_modules/bootstrap/scss/buttons";
 
-.modal-footer{
-	display: block;
+// this should format modal's title and avoid breaking default google style by using bootstrap reboot
+h1, h2, h3, h4, h5, h6 {
+	margin-top: 0;
+	margin-bottom: $headings-margin-bottom;
 }
 
 .marker{

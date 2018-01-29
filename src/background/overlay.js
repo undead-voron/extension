@@ -75,7 +75,7 @@ chrome.tabs.onUpdated.addListener((id, changeInfo, tab)=>{
 			if (manageUrl.checkUrl > -1){
 				chrome.tabs.executeScript(tab.id, {file: 'js/jquery-3.3.1.min.js', runAt: 'document_start'});
 				chrome.tabs.executeScript(tab.id, {file: 'js/handlebars-v4.0.11.js', runAt: 'document_idle'});
-				chrome.tabs.insertCSS(tab.id, {file: 'css/main.min.css', runAt: 'document_idle'});
+				chrome.tabs.insertCSS(tab.id, {file: 'css/main.min.css', runAt: 'document_start'});
 				chrome.tabs.executeScript(tab.id, {file: 'js/bootstrap.min.js', runAt: 'document_start'});
 				chrome.tabs.executeScript(tab.id, {file: 'js/templates.js', runAt: 'document_idle'});
 				chrome.tabs.executeScript(tab.id, {file: 'js/message.js', runAt: 'document_end'});
