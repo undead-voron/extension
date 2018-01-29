@@ -12,19 +12,20 @@ const gulp         = require('gulp'),
 
 gulp.task('js', ()=> {
   return gulp.src([
-    'src/js/*.js',
+    'src/*/*.js', 'src/*/*/*.js'
   ])
     .pipe(es6uglify())
-    .pipe(gulp.dest('out/js'));
+    .pipe(rename({dirname: 'js'}))
+    .pipe(gulp.dest('out'));
 });
 
-gulp.task('js-libs', ()=> {
-  return gulp.src([
-    'src/js/libs/*.js',
-  ])
-    .pipe(gulp.dest('out/js'));
+gulp.task('bootstrap-js', ()=> {
+  return gulp.src('node_modules/bootstrap/dist/js/bootstrap.min.js')
+    //.pipe(es6uglify())
+    .pipe(rename({dirname: 'js'}))
+    .pipe(gulp.dest('out'));
 });
-
+/*
 gulp.task('inject', () => {
   return gulp.src([
     'src/js/inject/*.js'
@@ -35,23 +36,23 @@ gulp.task('inject', () => {
     .pipe(es6uglify())
     .pipe(gulp.dest('out/js'))
 });
-
+*/
 gulp.task('sass', () => {
-  return gulp.src(['src/sass/**/*.sass', 'src/sass/**/*.scss'])
+  return gulp.src(['src/*/*.sass', 'src/*/*.scss'])
     .pipe(sass({outputStyle: 'expand'}).on("error", notify.onError()))
-    .pipe(rename({suffix: '.min', prefix : ''}))
+    .pipe(rename({suffix: '.min', prefix : '', dirname: 'css'}))
     .pipe(autoprefixer(['last 15 versions']))
     .pipe(cleanCSS())
-    .pipe(gulp.dest('out/css'));
+    .pipe(gulp.dest('out'));
 });
 
 gulp.task('html', () => {
-  return gulp.src('src/html/*.html')
+  return gulp.src('src/popup/*.html')
     .pipe(gulp.dest('out'));
 });
 
 gulp.task('icon', () => {
-  return gulp.src('src/img/*.png')
+  return gulp.src('src/content/img/*.png')
     .pipe(gulp.dest('out/img'));
 });
 
@@ -61,12 +62,12 @@ gulp.task('copy-manifest', () => {
 });
 
 gulp.task('handlebars', () => {
-  return gulp.src('src/handlebars/*.handlebars')
+  return gulp.src(['src/*/*.handlebars', 'src/*/*/*.handlebars'])
     .pipe(handlebars())
     // precompile templates
     .pipe(wrap({
       header: (filename)=>{
-        let name = filename.path.substr(filename.base.length, filename.path.length - filename.base.length).split('.');
+        let name = filename.path.substr(filename.path.lastIndexOf('/') + 1, filename.path.length -filename.path.lastIndexOf('/') ).split('.');
         name.pop();
         return `templates['`+ name.join('.') + `'] = template(`
       },
@@ -98,18 +99,18 @@ gulp.task('watch', [
   'sass',
   'html',
   'icon',
-  'inject',
-  'js-libs',
+  //'inject',
+  'bootstrap-js',
   'handlebars'
 ], () => {
-  gulp.watch(['src/sass/**/*.sass', 'src/sass/**/*.scss'], ['sass']);
+  gulp.watch(['src/*/*.sass', 'src/*/*.scss'], ['sass']);
   gulp.watch('src/manifest.json', ['copy-manifest']);
-  gulp.watch('src/js/*.js', ['js']);
-  gulp.watch('src/html/*.html', ['html']);
-  gulp.watch('src/img/*.png', ['icon']);
-  gulp.watch('src/js/inject/*.js', ['inject']);
-  gulp.watch('src/js/libs/*.js', ['js-libs']);
-  gulp.watch('src/handlebars/*.handlebars', ['handlebars']);
+  gulp.watch(['src/*/*.js', 'src/*/*/*.js'], ['js']);
+  gulp.watch('src/popup/*.html', ['html']);
+  gulp.watch('src/content/img/*.png', ['icon']);
+  //gulp.watch('src/js/inject/*.js', ['inject']);
+  gulp.watch('node_modules/bootstrap/dist/js/bootstrap.min.js', ['bootstrap-js']);
+  gulp.watch(['src/*/*.handlebars', 'src/*/*/*.handlebars'], ['handlebars']);
 });
 
 // build extension
@@ -119,8 +120,8 @@ gulp.task('build', [
   'sass',
   'html',
   'icon',
-  'inject',
-  'js-libs',
+  //'inject',
+  'bootstrap-js',
   'handlebars'
 ]);
 

@@ -1,0 +1,27 @@
+@import "../../node_modules/bootstrap/scss/functions";
+@import "../../node_modules/bootstrap/scss/variables";
+@import "../../node_modules/bootstrap/scss/mixins";
+@import "../../node_modules/bootstrap/scss/utilities";
+@import "../../node_modules/bootstrap/scss/buttons";
+@import "../../node_modules/bootstrap/scss/modal";
+
+.modal-footer{
+	display: block;
+}
+
+.marker{
+	margin:{
+		top: 5px;
+		left: -5px;
+	}
+	transform: translateX(-100%);
+	position: absolute;
+	display: block;
+	& img{
+		display: block;
+		height: auto;
+		width: auto;
+		max-width: 25px;
+	}
+};
+
