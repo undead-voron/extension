@@ -57,13 +57,13 @@ class UrlManager {
 		return this.siteList.findIndex((item) => this.url.hostname.indexOf(item.domain) > -1);
 	}
 	get isSearching(){
-		const check = this.searchEngines.filter((item)=> this.url.hostname.indexOf(item) > -1 );
-		return check.length === 1 && this.url.pathname.indexOf('/search') === 0;
+		const check = this.searchEngines.find((item)=> this.url.hostname.indexOf(item) > -1 );
+		return check && this.url.pathname.indexOf('/search') === 0;
 	}
 	get isBing(){
 		const domain = this.url.hostname;
-		const check = this.searchEngines.filter((item)=> domain.indexOf(item) > -1 );
-		return check[0] === 'bing.com';
+		const check = this.searchEngines.find((item)=> domain.indexOf(item) > -1 );
+		return check === 'bing.com';
 	}
 }
 
